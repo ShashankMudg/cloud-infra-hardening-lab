@@ -1,0 +1,52 @@
+name: "DevSecOps Security Scan"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  terraform-security-audit:
+    name: "Terraform Security Audit"
+    runs-on: ubuntu-latest
+    
+    # Permissions required for security scanning actions
+    permissions:
+      contents: read
+      pull-requests: write
+      security-events: write
+
+    steps:
+      - name: "Step 1: Checkout Code"
+        uses: actions/checkout@v4
+
+      - name: "Step 2: Setup Terraform"
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.0"
+
+      - name: "Step 3: Terraform Init"
+        run: terraform init
+
+      - name: "Step 4: Terraform Format Check"
+        # Ye check karega ki code properly aligned hai ya nahi
+        run: terraform fmt -check -recursive
+
+      - name: "Step 5: Terraform Validate"
+        # Syntax errors check karne ke liye
+        run: terraform validate
+
+      - name: "Step 6: Run tfsec Scan"
+        # Ye sabse important step hai: Industry standard security scanner
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          soft_fail: false # Agar security vulnerability mile toh pipeline fail kar do
+
+      - name: "Step 7: Checkov IaC Scan"
+        # Extra layer for cloud security misconfigurations
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform
+          soft_fail: true

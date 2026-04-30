@@ -1,0 +1,20 @@
+# Local .terraform folder (Contains providers/modules)
+.terraform/
+
+# Terraform state files (Contains sensitive infrastructure data)
+*.tfstate
+*.tfstate.*
+
+# Crash logs
+crash.log
+
+# Terraform variables file (If it contains secrets)
+*.tfvars
+*.tfvars.json
+
+# Local environment variables
+.env
+
+# AWS credentials or local keys
+.aws/
+*.pem
