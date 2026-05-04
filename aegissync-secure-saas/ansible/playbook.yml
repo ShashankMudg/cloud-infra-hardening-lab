@@ -1,0 +1,10 @@
+- name: AegisSync Setup
+  hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Install Terraform
+      apt:
+        name: unzip
+        state: present
+      become: yes
